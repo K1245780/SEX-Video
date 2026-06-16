@@ -1,0 +1,19 @@
+-- ১. ভিডিওর উৎস (লিঙ্ক বা ফাইল পাথ) ও লাইক কাউন্টের জন্য মূল টেবিল
+CREATE TABLE IF NOT EXISTS `video_feed` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `video_id` VARCHAR(50) NOT NULL UNIQUE,
+  `video_source` LONGTEXT NOT NULL, -- যেকোনো সাইটের বড় ইউআরএল বা ফাইল ডাটা রাখার জন্য LONGTEXT
+  `upload_type` VARCHAR(10) NOT NULL, -- 'url' অথবা 'file' চেনার জন্য
+  `caption` TEXT NOT NULL,
+  `likes_count` INT DEFAULT 0, -- কোনো ফেক বুস্ট বা কাল্পনিক সংখ্যা থাকবে না, ০ থেকে শুরু
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ২. দর্শকদের আসল মন্তব্যগুলো জমা রাখার টেবিল
+CREATE TABLE IF NOT EXISTS `video_comments` (
+  `comment_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `video_id` VARCHAR(50) NOT NULL,
+  `comment_text` TEXT NOT NULL,
+  `commented_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`video_id`) REFERENCES `video_feed`(`video_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
