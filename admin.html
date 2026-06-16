@@ -15,6 +15,7 @@
             --success: #28a745;
             --danger: #dc3545;
             --border: #e3e6f0;
+            --info: #17a2b8;
         }
 
         * {
@@ -36,10 +37,9 @@
 
         .admin-container {
             width: 100%;
-            max-width: 550px;
+            max-width: 580px;
         }
 
-        /* কার্ড স্টাইল */
         .admin-card {
             background-color: var(--bg-card);
             border-radius: 12px;
@@ -59,7 +59,6 @@
             color: var(--text-main);
         }
 
-        /* ইনপুট ফিল্ডস */
         .form-group {
             margin-bottom: 18px;
             position: relative;
@@ -101,7 +100,47 @@
             resize: vertical;
         }
 
-        /* বোতাম */
+        /* ফাইল ইনপুট কাস্টমাইজেশন */
+        .file-upload-wrapper {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .file-upload-wrapper:hover {
+            border-color: var(--primary);
+            background: #f1f7ff;
+        }
+        .file-upload-wrapper input[type="file"] {
+            display: none;
+        }
+        .file-upload-wrapper i {
+            font-size: 30px;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        /* ওআর (OR) ডিভাইডার */
+        .divider-or {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--text-sub);
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .divider-or::before, .divider-or::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+        }
+        .divider-or:not(:empty)::before { margin-right: .5em; }
+        .divider-or:not(:empty)::after { margin-left: .5em; }
+
         .admin-btn {
             width: 100%;
             padding: 12px;
@@ -122,12 +161,9 @@
         .btn-danger { background-color: var(--danger); color: white; }
         .admin-btn:hover { opacity: 0.9; }
 
-        /* হিডেন ক্লাস */
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
-        /* ভিডিও তালিকা ম্যানেজমেন্ট */
+        /* ভিডিও ম্যানেজার লিস্ট */
         .video-manager-list {
             max-height: 220px;
             overflow-y: auto;
@@ -146,21 +182,9 @@
             background-color: var(--bg-card);
         }
 
-        .manager-item:last-child {
-            border-bottom: none;
-        }
-
-        .manager-meta {
-            max-width: 70%;
-        }
-
-        .manager-meta p {
-            font-size: 14px;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .manager-item:last-child { border-bottom: none; }
+        .manager-meta { max-width: 70%; }
+        .manager-meta p { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .small-del-btn {
             background-color: var(--danger);
@@ -189,33 +213,46 @@
 
     <div class="admin-card" id="lockScreen">
         <div class="card-title">
-            <i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i> ক্রিয়েটর স্টুডিও লগইন
+            <i class="fa-solid fa-user-shield" style="color: var(--primary);"></i> তোর মাকে চুদি
         </div>
         <div class="form-group">
-            <label for="adminSecretKey">মাস্টার পাসওয়ার্ড</label>
+            <label for="adminSecretKey"> পাসওয়ার্ড</label>
             <i class="fa-solid fa-lock input-icon"></i>
             <input type="password" id="adminSecretKey" class="form-control" placeholder="আপনার গোপন কোডটি দিন...">
         </div>
         <button class="admin-btn btn-primary" id="loginTrigger">
-            <i class="fa-solid fa-right-to-bracket"></i> অ্যাক্সেস ভেরিফাই করুন
+            <i class="fa-solid fa-right-to-bracket"></i> ড্যাশবোর্ড আনলক করুন
         </button>
         <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> ইউজার ফিডে ফিরে যান</a>
     </div>
 
     <div class="admin-card hidden" id="controlDashboard">
         <div class="card-title">
-            <i class="fa-solid fa-cloud-arrow-up" style="color: var(--success);"></i> নতুন ভিডিও পাবলিশ করুন
+            <i class="fa-solid fa-photo-film" style="color: var(--success);"></i> নতুন ভিডিও আপলোড / লিঙ্ক করুন
         </div>
         
         <div class="form-group">
-            <label for="githubUrl">গিটহাব ভিডিও ইউআরএল (MP4 Link)</label>
-            <i class="fa-solid fa-link input-icon"></i>
-            <input type="url" id="githubUrl" class="form-control" placeholder="https://raw.githubusercontent.com/...">
+            <label for="videoUrlInput">১. যেকোনো ভিডিও ইউআরএল (URL Link)</label>
+            <i class="fa-solid fa-globe input-icon"></i>
+            <input type="url" id="videoUrlInput" class="form-control" placeholder="https://example.com/video.mp4 বা যেকোনো ভিডিও লিঙ্ক">
         </div>
+
+        <div class="divider-or">অথবা সরাসরি ফাইল আপলোড করুন</div>
+
+        <div class="form-group">
+            <label>২. মেমোরি/স্টোরেজ থেকে ভিডিও ফাইল সিলেক্ট করুন</label>
+            <div class="file-upload-wrapper" onclick="document.getElementById('videoFileInput').click()">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <p id="fileStatusText">এখানে ক্লিক করে ফাইল পছন্দ করুন (.mp4)</p>
+                <input type="file" id="videoFileInput" accept="video/mp4">
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 25px 0;">
 
         <div class="form-group">
             <label for="videoCaptionText">ভিডিওর ক্যাপশন</label>
-            <textarea id="videoCaptionText" class="form-control" rows="3" placeholder="আকর্ষণীয় ক্যাপশন বা হ্যাশট্যাগ লিখুন..."></textarea>
+            <textarea id="videoCaptionText" class="form-control" rows="3" placeholder="ভিডিওর আকর্ষণীয় ক্যাপশন বা হ্যাশট্যাগ লিখুন..."></textarea>
         </div>
 
         <button class="admin-btn btn-success" id="publishTrigger" style="margin-bottom: 20px;">
@@ -240,7 +277,177 @@
 </div>
 
 <script>
-    // এই পেজের ব্যাকগ্রাউন্ড ইঞ্জিন এবং লজিক আমরা পরবর্তী ধাপে যুক্ত করব।
+    // --- ৪র্থ ধাপ: ডুয়াল আপলোড অ্যাডমিন ড্যাশবোর্ড জাভাস্ক্রিপ্ট ইঞ্জিন ---
+
+    // গ্লোবাল সিক্রেট পাসওয়ার্ড
+    const MASTER_SECRET_KEY = "kalyan1357"; 
+
+    // ডোমেন কানেকশনস
+    const lockScreen = document.getElementById('lockScreen');
+    const controlDashboard = document.getElementById('controlDashboard');
+    const adminSecretKey = document.getElementById('adminSecretKey');
+    const loginTrigger = document.getElementById('loginTrigger');
+    
+    // আপলোড ইনপুট এলিমেন্টসমূহ
+    const videoUrlInput = document.getElementById('videoUrlInput');
+    const videoFileInput = document.getElementById('videoFileInput');
+    const fileStatusText = document.getElementById('fileStatusText');
+    const videoCaptionText = document.getElementById('videoCaptionText');
+    
+    const publishTrigger = document.getElementById('publishTrigger');
+    const dashboardVideoList = document.getElementById('dashboardVideoList');
+    const logoutTrigger = document.getElementById('logoutTrigger');
+
+    // লোকাল ফাইল ডাটা প্রসেস করার ভেরিয়েবল
+    let selectedFileBase64 = "";
+
+    // ফাইল সিলেক্ট করলে সেটির নাম স্ক্রিনে দেখানো এবং প্রসেস করা
+    videoFileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            fileStatusText.innerHTML = `<i class="fa-solid fa-file-video" style="color:var(--success);"></i> <strong>${file.name}</strong> সিলেক্ট হয়েছে`;
+            
+            // ফাইলটিকে ক্লায়েন্ট সাইড মেমোরিতে রিড করা
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                selectedFileBase64 = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            fileStatusText.innerText = "এখানে ক্লিক করে ফাইল পছন্দ করুন (.mp4)";
+            selectedFileBase64 = "";
+        }
+    });
+
+    // ১. সেশন ডাটা চেক (অলরেডি লগইন থাকলে লক স্ক্রিন স্কিপ করবে)
+    if(sessionStorage.getItem('dashboardAccess') === 'granted') {
+        unlockStudio();
+    }
+
+    // ২. লগইন ভেরিফিকেশন ফাংশন
+    function verifyAccess() {
+        const inputKey = adminSecretKey.value.trim();
+        if(inputKey === MASTER_SECRET_KEY) {
+            sessionStorage.setItem('dashboardAccess', 'granted');
+            unlockStudio();
+            adminSecretKey.value = '';
+        } else {
+            alert('❌ ভুল পাসওয়ার্ড! সঠিক কোডটি দিয়ে আবার চেষ্টা করুন।');
+        }
+    }
+
+    adminSecretKey.addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') verifyAccess();
+    });
+    loginTrigger.addEventListener('click', verifyAccess);
+
+    // ৩. ড্যাশবোর্ড আনলক
+    function unlockStudio() {
+        lockScreen.classList.add('hidden');
+        controlDashboard.classList.remove('hidden');
+        renderDashboardList();
+    }
+
+    // ৪. স্মার্ট ডুয়াল পাবলিশ মেকানিজম (লিঙ্ক অথবা ফাইল)
+    publishTrigger.addEventListener('click', () => {
+        const urlLink = videoUrlInput.value.trim();
+        const caption = videoCaptionText.value.trim();
+
+        // ক্যাপশন চেক
+        if(caption === '') {
+            alert('⚠️ দয়া করে ভিডিওর জন্য একটি ক্যাপশন লিখুন!');
+            return;
+        }
+
+        let finalVideoSource = "";
+
+        // যাচাই করা: ইউজার কি লিঙ্ক দিয়েছেন নাকি ফাইল সিলেক্ট করেছেন?
+        if (urlLink !== "") {
+            finalVideoSource = urlLink; // যেকোনো সাইটের ভিডিও লিঙ্ক
+        } else if (selectedFileBase64 !== "") {
+            finalVideoSource = selectedFileBase64; // মেমোরি থেকে আপলোড করা ফাইল ডাটা
+        } else {
+            alert('⚠️ যেকোনো একটি অপশন পূরণ করুন! হয় ভিডিও ইউআরএল লিঙ্ক দিন, অথবা স্টোরেজ থেকে ফাইল আপলোড করুন।');
+            return;
+        }
+
+        // লোকাল স্টোরেজ ডাটাবেজ রিড করা
+        let videos = JSON.parse(localStorage.getItem('videos')) || [];
+        
+        // ইউনিক আইডি তৈরি
+        const videoId = 'stream_' + Date.now();
+
+        // নতুন ভিডিও অবজেক্ট (কোনো ফেক বা ডেমো কাউন্ট ছাড়া একদম ফ্রেশ ০ থেকে শুরু)
+        const newVideo = {
+            id: videoId,
+            url: finalVideoSource,
+            caption: caption,
+            likes: 0,
+            isLiked: false,
+            comments: []
+        };
+
+        // নতুন ভিডিওটি ফিডের শুরুতে পুশ করা
+        videos.unshift(newVideo);
+        localStorage.setItem('videos', JSON.stringify(videos));
+
+        alert('🎉 সফল হয়েছে! আপনার ভিডিওটি মেইন সাইটের ইউজার ফিডে লাইভ করা হয়েছে।');
+        
+        // ফর্ম রিসেট করা
+        videoUrlInput.value = '';
+        videoFileInput.value = '';
+        fileStatusText.innerText = "এখানে ক্লিক করে ফাইল পছন্দ করুন (.mp4)";
+        videoCaptionText.value = '';
+        selectedFileBase64 = "";
+        
+        renderDashboardList();
+    });
+
+    // ৫. ড্যাশবোর্ডে ভিডিওর তালিকা রেন্ডার করা
+    function renderDashboardList() {
+        let videos = JSON.parse(localStorage.getItem('videos')) || [];
+        dashboardVideoList.innerHTML = '';
+
+        if(videos.length === 0) {
+            dashboardVideoList.innerHTML = '<p style="color:var(--text-sub); text-align:center; padding: 20px; font-size:14px;">কোনো ভিডিও আপলোড করা নেই।</p>';
+            return;
+        }
+
+        videos.forEach(video => {
+            const item = document.createElement('div');
+            item.className = 'manager-item';
+            item.innerHTML = `
+                <div class="manager-meta">
+                    <p>${escapeInput(video.caption)}</p>
+                </div>
+                <button class="small-del-btn" onclick="removeVideoFromFeed('${video.id}')">
+                    <i class="fa-solid fa-trash-can"></i> ডিলিট
+                </button>
+            `;
+            dashboardVideoList.appendChild(item);
+        });
+    }
+
+    // ৬. ফিড থেকে ভিডিও ডিলিট করা
+    window.removeVideoFromFeed = function(id) {
+        if(confirm('🚨 আপনি কি নিশ্চিত যে এই ভিডিওটি আপনার ওয়েবসাইট থেকে স্থায়ীভাবে মুছে ফেলতে চান?')) {
+            let videos = JSON.parse(localStorage.getItem('videos')) || [];
+            videos = videos.filter(v => v.id !== id);
+            localStorage.setItem('videos', JSON.stringify(videos));
+            renderDashboardList();
+        }
+    }
+
+    // ৭. লকআউট মেকানিজম
+    logoutTrigger.addEventListener('click', () => {
+        sessionStorage.removeItem('dashboardAccess');
+        window.location.reload();
+    });
+
+    function escapeInput(text) {
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
 </script>
 </body>
-</html>
+                </html>
