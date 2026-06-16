@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>চোদাচুদির - ভিডিও সোশ্যাল প্ল্যাটফর্ম</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #f0f2f5;
+            --bg-secondary: #ffffff;
+            --text-primary: #1c1e21;
+            --text-secondary: #65676b;
+            --accent-color: #1877f2;
+            --border-color: #e4e6eb;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #18191a;
+            --bg-secondary: #242526;
+            --text-primary: #e4e6eb;
+            --text-secondary: #b0b3b8;
+            --border-color: #3e4042;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        /* ন্যাপবার ও হেডার */
+        .navbar {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-container {
+            flex: 0 1 500px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 20px 10px 40px;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-primary);
+        }
+
+        /* মূল কন্টেন্ট লেআউট */
+        .main-layout {
+            max-width: 650px;
+            margin: 20px auto;
+            padding: 0 10px;
+            padding-bottom: 50px;
+        }
+
+        /* ফেসবুক স্টাইল ভিডিও কার্ড */
+        .feed-card {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .meta-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .meta-info span {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .card-caption {
+            padding: 0 15px 12px 15px;
+            font-size: 16px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        /* ভিডিও প্লেয়ার এরিয়া */
+        .video-container {
+            background: #000;
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* লাইক এবং কমেন্ট কাউন্টার টেক্সট */
+        .stats-counter {
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* লাইক-কমেন্ট অ্যাকশন বাটন বার */
+        .interaction-bar {
+            display: flex;
+            padding: 5px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .action-button {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 10px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s;
+            border-radius: 4px;
+        }
+
+        .action-button:hover {
+            background-color: var(--bg-primary);
+        }
+
+        .action-button.liked {
+            color: var(--accent-color);
+        }
+
+        /* কমেন্ট বক্স সেকশন */
+        .comment-box-wrapper {
+            padding: 15px;
+            background-color: var(--bg-secondary);
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .user-input-field {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            outline: none;
+            font-size: 14px;
+        }
+
+        .submit-comment-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .comments-display-list {
+            max-height: 180px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .single-comment {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #fff;
+        }
+
+        .comment-text-bg {
+            background-color: var(--bg-primary);
+            padding: 8px 15px;
+            border-radius: 18px;
+            max-width: 85%;
+        }
+
+        .comment-text-bg h5 {
+            font-size: 13px;
+            margin-bottom: 2px;
+            font-weight: 600;
+        }
+
+        .comment-text-bg p {
+            font-size: 14px;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-play"></i> SexBD
+        </div>
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="masterSearch" class="search-input" placeholder="ভিডিও খুঁজুন...">
+        </div>
+        <div class="nav-actions">
+            <button class="icon-btn" id="themeToggle" title="থিম পরিবর্তন"><i class="fa-solid fa-moon"></i></button>
+            <a href="admin.html" class="icon-btn" title="অ্যাডমিন প্যানেল" style="text-decoration: none;"><i class="fa-solid fa-user-gear"></i></a>
+        </div>
+    </nav>
+
+    <main class="main-layout" id="videoFeedContainer">
+        </main>
+
+</body>
+</html>
