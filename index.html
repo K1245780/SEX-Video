@@ -314,6 +314,177 @@
 
     <main class="main-layout" id="videoFeedContainer">
         </main>
+    <script>
+        // লোকাল বা গ্লোবাল ডাটাবেজ থেকে আসল ভিডিওর তালিকা তুলে আনা
+        let videoDatabase = JSON.parse(localStorage.getItem('videos')) || [];
+
+        // ডোমেন এলিমেন্টসমূহ
+        const videoFeedContainer = document.getElementById('videoFeedContainer');
+        const masterSearch = document.getElementById('masterSearch');
+        const themeToggle = document.getElementById('themeToggle');
+
+        // ১. থিম মেমোরি কন্ট্রোলার (ডার্ক/লাইট মোড সেভ রাখা)
+        if(localStorage.getItem('savedTheme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('savedTheme', 'light');
+                themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('savedTheme', 'dark');
+                themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+            }
+        });
+
+        // ২. রিয়েল ভিডিও ফিড রেন্ডারিং ইঞ্জিন
+        function renderLiveFeed(searchQuery = '') {
+            videoFeedContainer.innerHTML = ''; // আগের কন্টেন্ট ক্লিয়ার করা
+            
+            // সার্চ ইনপুট অনুযায়ী ফিল্টারিং লজিক (ক্যাপশন ম্যাচিং)
+            const filteredVideos = videoDatabase.filter(video => 
+                video.caption.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+
+            // যদি কোনো ভিডিও আপলোড করা না থাকে
+            if(filteredVideos.length === 0) {
+                videoFeedContainer.innerHTML = `
+                    <div style="text-align:center; padding: 50px 20px; color: var(--text-secondary);">
+                        <i class="fa-solid fa-video-slash" style="font-size: 45px; margin-bottom: 15px; color: var(--text-secondary);"></i>
+                        <h3 style="font-size: 18px; font-weight: 600;">কোনো ভিডিও পাওয়া যায়নি!</h3>
+                        <p style="font-size: 14px; margin-top: 5px;">অ্যাডমিন প্যানেল থেকে নতুন ভিডিও আপলোড করুন।</p>
+                    </div>`;
+                return;
+            }
+
+            // ভিডিওগুলো এক এক করে লুপ করে ফেসবুক স্টাইলে কার্ড তৈরি
+            filteredVideos.forEach((video) => {
+                const card = document.createElement('div');
+                card.className = 'feed-card';
+
+                // ডাটাবেজ থেকে আসল কমেন্টের তালিকা তৈরি
+                let commentsHTML = '';
+                // ভিডিওতে কমেন্টস অ্যারে না থাকলে ডিফাইন করে নেওয়া
+                const videoComments = video.comments || [];
+                
+                videoComments.forEach(comment => {
+                    commentsHTML += `
+                        <div class="single-comment">
+                            <div class="comment-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="comment-text-bg">
+                                <h5>ভিজিটর</h5>
+                                <p>${securityFilter(comment)}</p>
+                            </div>
+                        </div>`;
+                });
+
+                // ডাইনামিকালি আসল লাইক এবং কমেন্ট কাউন্ট বসানো (কোনো অতিরিক্ত ফেক কাউন্ট নেই)
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="admin-avatar">A</div>
+                        <div class="meta-info">
+                            <h4>অ্যাডমিন প্রোফাইল</h4>
+                            <span>লাইভ ভিডিও</span>
+                        </div>
+                    </div>
+                    <div class="card-caption">${securityFilter(video.caption)}</div>
+                    
+                    <div class="video-container">
+                        <video controls preload="metadata" playsinline id="player-${video.id}">
+                            <source src="${video.url}" type="video/mp4">
+                            আপনার ব্রাউজারটি ভিডিও সমর্থন করে না।
+                        </video>
+                    </div>
+
+                    <div class="stats-counter">
+                        <span><i class="fa-solid fa-thumbs-up" style="color: var(--accent-color);"></i> <span id="like-count-${video.id}">${video.likes || 0}</span> লাইক</span>
+                        <span>${videoComments.length}টি মন্তব্য</span>
+                    </div>
+
+                    <div class="interaction-bar">
+                        <button class="action-button ${video.isLiked ? 'liked' : ''}" onclick="toggleLike('${video.id}')">
+                            <i class="${video.isLiked ? 'fa-solid' : 'fa-regular'} fa-thumbs-up"></i> লাইক
+                        </button>
+                        <button class="action-button" onclick="focusCommentBox('${video.id}')">
+                            <i class="fa-regular fa-comment"></i> মন্তব্য করুন
+                        </button>
+                    </div>
+
+                    <div class="comment-box-wrapper">
+                        <div class="comment-form">
+                            <input type="text" id="comment-input-${video.id}" class="user-input-field" placeholder="একটি মন্তব্য লিখুন...">
+                            <button class="submit-comment-btn" onclick="postComment('${video.id}')">পোস্ট</button>
+                        </div>
+                        <div class="comments-display-list">
+                            ${commentsHTML || '<span style="color:var(--text-secondary); font-size:12px; padding:5px; display:block;">প্রথম মন্তব্যটি আপনার হোক!</span>'}
+                        </div>
+                    </div>
+                `;
+                
+                videoFeedContainer.appendChild(card);
+            });
+        }
+
+        // ৩. রিয়েল-টাইম লাইক লজিক
+        window.toggleLike = function(id) {
+            let idx = videoDatabase.findIndex(v => v.id === id);
+            if(idx !== -1) {
+                if(videoDatabase[idx].isLiked) {
+                    videoDatabase[idx].likes--;
+                    videoDatabase[idx].isLiked = false;
+                } else {
+                    videoDatabase[idx].likes = (videoDatabase[idx].likes || 0) + 1;
+                    videoDatabase[idx].isLiked = true;
+                }
+                localStorage.setItem('videos', JSON.stringify(videoDatabase));
+                renderLiveFeed(masterSearch.value);
+            }
+        };
+
+        // ৪. রিয়েল-টাইম কমেন্ট পোস্টিং লজিক
+        window.postComment = function(id) {
+            const input = document.getElementById(`comment-input-${id}`);
+            if(input && input.value.trim() !== '') {
+                let idx = videoDatabase.findIndex(v => v.id === id);
+                if(idx !== -1) {
+                    if(!videoDatabase[idx].comments) videoDatabase[idx].comments = [];
+                    videoDatabase[idx].comments.push(input.value.trim());
+                    localStorage.setItem('videos', JSON.stringify(videoDatabase));
+                    input.value = '';
+                    renderLiveFeed(masterSearch.value);
+                }
+            }
+        };
+
+        // ৫. কমেন্ট বক্সে ফোকাস করা
+        window.focusCommentBox = function(id) {
+            const target = document.getElementById(`comment-input-${id}`);
+            if(target) target.focus();
+        };
+
+        // ৬. টাইপ করার সাথে সাথে সার্চ ফিল্টারিং
+        masterSearch.addEventListener('input', (e) => {
+            renderLiveFeed(e.target.value);
+        });
+
+        // ৭. সিকিউরিটি ফিল্টার (XSS স্ক্রিপ্ট অ্যাটাক ব্লক করার জন্য)
+        function securityFilter(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // প্রথমবার পেজ লোড হওয়ার পর ফিড চালু করা
+        renderLiveFeed();
+    </script>
 
 </body>
 </html>
